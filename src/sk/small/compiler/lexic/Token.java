@@ -14,7 +14,18 @@ public class Token {
         this.name = name;
     }
 
+    public Token(char name) {
+        this.name = Character.toString(name);
+    }
+
+
+
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return "Token name: \"" + name + "\"";
     }
 }

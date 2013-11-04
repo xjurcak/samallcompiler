@@ -23,6 +23,9 @@ public class Word extends Token {
     public static final Word PLUS = new Word("+");
     public static final Word MINUS = new Word("-");
     public static final Word STATEMENT_END = new Word(";");
+    public static final Word COMMA = new Word(",");
+    public static final Word TRUE = new Word("TRUE");
+    public static final Word FALSE = new Word("FALSE");
 
     public Word(String name) {
         super(name);

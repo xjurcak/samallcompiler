@@ -19,4 +19,9 @@ public class Number extends Token{
     public int getNumber() {
         return number;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + " Number value: " + number;
+    }
 }

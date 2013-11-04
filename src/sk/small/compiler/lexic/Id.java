@@ -18,4 +18,9 @@ public class Id extends Token {
         super("id");
         this.tableId = tableId;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + " Table id: " + tableId;
+    }
 }

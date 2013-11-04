@@ -113,6 +113,8 @@ public class Lexicator {
                 return Word.TRUE;
             else if ( "FALSE".equals(str) )
                 return Word.FALSE;
+            else if ( "NOT".equals(str) )
+                return Word.NOT;
             //todo add lexeme to symbol table
             return new Id(1);
         }  else if( Character.isDigit(chr) && chr != '0' ){ //start read number

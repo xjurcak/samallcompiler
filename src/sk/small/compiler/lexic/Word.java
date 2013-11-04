@@ -26,6 +26,7 @@ public class Word extends Token {
     public static final Word COMMA = new Word(",");
     public static final Word TRUE = new Word("TRUE");
     public static final Word FALSE = new Word("FALSE");
+    public static final Word NOT = new Word("NOT");
 
     public Word(String name) {
         super(name);

@@ -2,6 +2,7 @@ package sk.small.compiler;
 
 import sk.small.compiler.lexic.Lexicator;
 import sk.small.compiler.lexic.Token;
+import sk.small.compiler.syntax.SyntaxAnalyzator;
 import sk.small.compiler.util.Log;
 
 import java.io.FileInputStream;
@@ -17,10 +18,8 @@ public class Main {
         try {
             InputStream is = new FileInputStream("C:\\Users\\xjurcako\\Documents\\skola\\softjazyky\\SmallCompilerProject\\test\\example.small");
             Lexicator lexicator = new Lexicator(is);
-            Token t;
-            while ((t = lexicator.nextToken()) != null ){
-                 //Log.d(LOGTAG, "Token recognized: " + t);
-            }
+            SyntaxAnalyzator analyzator = new SyntaxAnalyzator(lexicator);
+            analyzator.check();
 
         } catch (FileNotFoundException e) {
             Log.e(LOGTAG, e.getMessage());

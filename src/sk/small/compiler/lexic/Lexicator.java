@@ -38,6 +38,7 @@ public class Lexicator {
 
         //skip all empty characters
         if( chr == ' ' || chr == '\t' || chr == '\n'){
+            Log.d(LOGTAG, "skip char: " + (char) chr);
             while ( (chr = buffer.readNext()) != -1) {
                 if( chr == ' ' || chr == '\t' || chr == '\n')  {
                     Log.d(LOGTAG, "skip char: " + (char) chr);
@@ -73,7 +74,7 @@ public class Lexicator {
                 chr = buffer.readNext();
                 return Word.ASSIGN;
             } else {
-                Log.d(LOGTAG, "Error: unknow token:  ':'");
+                Log.e(LOGTAG, "Error: unknow token:  ':'");
                 return new Token(":");
             }
         } else if (Character.isLetter(chr)){
@@ -108,7 +109,8 @@ public class Lexicator {
             //todo add lexeme to symbol table
             return new Id(1);
         }  else if( Character.isDigit(chr) && chr != '0' ){ //start read number
-            int dig = Character.digit(chr, 10);
+            Log.d(LOGTAG, "Starting read first char: " + (char)chr);
+
             int number = 0;
 
             do {
@@ -117,14 +119,14 @@ public class Lexicator {
             } while ( Character.isDigit(chr));
 
             if(Character.isLetter(chr)) { //also error not allowed 1111jjfh
-                Log.d(LOGTAG, "Error: unexpected end character for number: " + (char)chr);
+                Log.e(LOGTAG, "Error: unexpected end character for number: " + (char)chr);
             }
-
+            Log.d(LOGTAG, "End read number value: " + number);
             return new Number(number);
         } else {
             // error unknow word
             Token t = new Token((char)chr);
-            Log.d(LOGTAG, "Error: unknow token: " + t);
+            Log.e(LOGTAG, "Error: unknow token: " + t);
             chr = buffer.readNext();
             return t;
         }

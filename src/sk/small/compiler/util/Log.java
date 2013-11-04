@@ -1,8 +1,7 @@
 package sk.small.compiler.util;
 
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Date;
+import java.util.logging.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,15 +12,30 @@ import java.util.logging.Logger;
 public class Log {
 
     private static final Logger logger = Logger.getLogger("SmallCompiler");
+    private static final Level LEVEL = Level.ALL;
 
     static {
-        logger.addHandler(new ConsoleHandler());
-        logger.setLevel(Level.ALL);
+        Handler handler = new ConsoleHandler();
+        handler.setFormatter(new Formatter() {
+
+            private final Date dat = new Date();
+
+            @Override
+            public String format(LogRecord record) {
+                dat.setTime(record.getMillis());
+                return String.format("%1$tb %1$td, %1$tY %1$tl:%1$tM:%1$tS %1$Tp %2$s: %3$s%n", dat, record.getLevel().getLocalizedName(), record.getMessage());
+            }
+        });
+
+        handler.setLevel(LEVEL);
+        logger.addHandler(handler);
+        logger.setLevel(LEVEL);
+        logger.setUseParentHandlers(false);
     }
 
     public static void d(String tag, String message){
-        //logger.log(Level.FINE, tag + ": " + message);
-        System.out.printf(tag + ": " + message + "\n");
+        logger.log(Level.FINE, tag + ": " + message);
+        //System.out.printf(tag + ": " + message + "\n");
     }
 
     public static void e(String tag, String message){

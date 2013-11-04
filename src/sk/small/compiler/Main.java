@@ -19,7 +19,7 @@ public class Main {
             Lexicator lexicator = new Lexicator(is);
             Token t;
             while ((t = lexicator.nextToken()) != null ){
-                 Log.d(LOGTAG, "Token recognized: " + t);
+                 //Log.d(LOGTAG, "Token recognized: " + t);
             }
 
         } catch (FileNotFoundException e) {

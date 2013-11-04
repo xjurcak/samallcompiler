@@ -30,6 +30,13 @@ public class Lexicator {
     }
 
     public Token nextToken() throws IOException{
+        Log.d(LOGTAG, "nextToken() start. Lexeme start with character: " + (char)chr);
+        Token t = readToken();
+        Log.d(LOGTAG, "nextToken() end. Token: " + t);
+        return t;
+    }
+
+    private Token readToken() throws IOException{
 
         lexeme = new StringBuffer();
 

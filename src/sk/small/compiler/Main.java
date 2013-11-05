@@ -19,7 +19,8 @@ public class Main {
             InputStream is = new FileInputStream("C:\\Users\\xjurcako\\Documents\\skola\\softjazyky\\SmallCompilerProject\\test\\example.small");
             Lexicator lexicator = new Lexicator(is);
             SyntaxAnalyzator analyzator = new SyntaxAnalyzator(lexicator);
-            analyzator.check();
+            boolean result = analyzator.check();
+            Log.d(LOGTAG, "Analyzator check reslut: " + result);
 
         } catch (FileNotFoundException e) {
             Log.e(LOGTAG, e.getMessage());

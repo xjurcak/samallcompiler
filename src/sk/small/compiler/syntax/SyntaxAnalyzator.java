@@ -2,6 +2,7 @@ package sk.small.compiler.syntax;
 
 import sk.small.compiler.lexic.*;
 import sk.small.compiler.lexic.Number;
+import sk.small.compiler.util.Log;
 
 import java.io.IOException;
 import java.util.Stack;
@@ -13,6 +14,7 @@ import java.util.Stack;
  * Time: 5:16 PM
  */
 public class SyntaxAnalyzator {
+    private static final String LOGTAG = SyntaxAnalyzator.class.getSimpleName();
 
     private final Lexicator lexicator;
     private Token token;
@@ -22,41 +24,58 @@ public class SyntaxAnalyzator {
         this.lexicator = lexicator;
 
         //push start nonterminal
-        stack.push(0);
+        stack.push(Word.EOF);
+        stack.push('P');
         token = lexicator.nextToken();
     }
 
     public boolean check() throws IOException {
 
-        Object o = stack.pop();
-
-        if(o instanceof Character) { //nonterminal so ve need expand new rule
-            int rule = SyntaxTable.getRule((Character)o, token);
-            applyRule(rule);
-        } else {
-            if(token.equals(o)){
-                //we can move to next Token
-                token = lexicator.nextToken();
+        do {
+            Log.d(LOGTAG, "Stack: " + stack);
+            Object o = stack.pop();
+            if(o instanceof Character) { //nonterminal so ve need expand new rule
+                int rule = SyntaxTable.getRule((Character)o, token);
+                Log.d(LOGTAG, "input: " + token + " rule: " + rule + " nonterminal: " + (Character)o );
+                if(rule == 0){
+                    Log.e(LOGTAG, "Error: no rule for nonsterminal: " + (Character)o + " and input: " + token);
+                    token = lexicator.nextToken();
+                } else {
+                    applyRule(rule);
+                }
+            } else {
+                if(token.getName().equals(((Token)o).getName())){
+                    //we can move to next Token
+                    Log.d(LOGTAG, "input: " + token + " rule: next token");
+                    token = lexicator.nextToken();
+                }
             }
-        }
 
-        return true;
+
+        } while (!stack.empty());
+
+        if(token == Word.EOF)
+            return true;
+        else
+            return false;
     }
 
     /*
 
-        S -> TS
-        S -> e
-        T -> IgE;
-        T -> r(L);
-        T -> w(X);
-        T -> iBhTY
-        Y -> ;|kT;
-        L -> IM
-        M -> ,IM|e
-        X -> EK
-        K -> ,EK|e
-        E -> FJ
+     2   S -> TS
+     3   S -> e
+     4   T -> IgE;
+     5   T -> r(L);
+     6   T -> w(X);
+     7   T -> iBhTY
+     8   Y -> ;
+     9   Y -> kT;
+     10  L -> IM
+     11  M -> ,IM
+     12  M -> e
+     13  X -> EK
+     14  K -> ,EK|e
+         E -> FJ
         J -> OFJ|e
         F -> (E)
         F -> I|N
@@ -91,17 +110,20 @@ public class SyntaxAnalyzator {
             case 3:     //3. S -> e
                 break;
             case 4:     //4. T -> IgE;
+                stack.push(Word.STATEMENT_END);
                 stack.push('E');
                 stack.push(Word.ASSIGN);
                 stack.push('I');
                 break;
             case 5:     //5. T -> r(L);
+                stack.push(Word.STATEMENT_END);
                 stack.push(Word.RP);
                 stack.push('L');
                 stack.push(Word.LP);
                 stack.push(Word.READ);
                 break;
             case 6:     // 6. T -> w(X);
+                stack.push(Word.STATEMENT_END);
                 stack.push(Word.RP);
                 stack.push('X');
                 stack.push(Word.LP);
@@ -118,6 +140,7 @@ public class SyntaxAnalyzator {
                 stack.push(Word.STATEMENT_END);
                 break;
             case 9:     //9. Y -> kT;
+                stack.push(Word.STATEMENT_END);
                 stack.push('T');
                 stack.push(Word.ELSE);
                 break;
@@ -163,7 +186,7 @@ public class SyntaxAnalyzator {
                 stack.push('I');
                 break;
             case 21:    //21. F -> N
-                stack.push('I');
+                stack.push('N');
                 break;
             case 22:    //22. O -> +
                 stack.push(Word.PLUS);
@@ -175,7 +198,7 @@ public class SyntaxAnalyzator {
                 stack.push('D');
                 stack.push('R');
                 break;
-            case 25:    //25.    D -> oRD|e
+            case 25:    //25.    D -> oRD
                 stack.push('D');
                 stack.push('R');
                 stack.push(Word.OR);

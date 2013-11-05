@@ -41,7 +41,7 @@ public class Lexicator {
         lexeme = new StringBuffer();
 
         if(chr == Buffer.EOF)
-            return null;
+            return Word.EOF;
 
         //skip all empty characters
         if( chr == ' ' || chr == '\t' || chr == '\n'){

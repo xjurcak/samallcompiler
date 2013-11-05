@@ -20,8 +20,8 @@ public class Number extends Token{
         return number;
     }
 
-    @Override
+   /* @Override
     public String toString() {
         return super.toString() + " Number value: " + number;
-    }
+    }*/
 }

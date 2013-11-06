@@ -1,0 +1,68 @@
+P -> bSd			program ::= 'BEGIN' statement_list 'END' . 
+S -> TS|e			statement_list ::= statement {statement} . 
+T -> IgE;			statement ::= ident ':=' expression ';' .
+T -> r(L);			statement ::= 'READ' '(' id_list ')' ';' .
+T -> w(X);			statement ::= 'WRITE' '(' expr_list ')' ';' . 
+
+T -> iBhTY			statement ::= 'IF' bexpr 'THEN' statement ['ELSE' statement] ';' . 
+Y -> ;|kT;
+
+L -> I|I,L			id_list ::= ident {',' ident} . 
+X -> E|E,X			expr_list ::= expression {',' expression} .
+E -> EOF|F			expression ::= [expression op] factor . 
+F -> (E)			factor ::= '(' expression ')' .
+F -> I|N			factor ::= ident | number . 
+O -> +|-			op ::= '+' | '-' . 
+B -> BoR|R			bexpr ::= [bexpr 'OR'] bterm .
+R -> RaA|A			bterm ::= [bterm 'AND'] bfactor .
+A -> nA|(B)|t|f			bfactor ::= 'NOT' bfactor | '(' bexp ')' | 'TRUE' | 'FALSE' . 
+
+I -> ZG				ident ::= letter {letter | digit09}. 
+G -> ZG|WG|e
+
+N -> +H|-H|H			number ::= [ '+' | '-' ] digit19 {digit09}. 
+H -> UC
+C -> WC|e
+
+U -> 1|2|3|4|5|6|7|8|9		digit09 ::= 0 | .. | 9 . 
+W -> 0|1|2|3|4|5|6|7|8|9	digit19 ::= 1 | .. | 9 . 
+Z -> a|...|z			letter ::= 'A' | .. | 'Z' | 'a' | .. | 'z' . 
+
+
+
+P - program
+S - statement_list
+T - statement
+I - ident
+E - expression
+L - id_list
+X - expr_list
+B - bexpr
+O - op
+F - factor
+N - number
+R - bterm
+A - bfactor
+Z - letter
+W - digit09
+U - digit19
+
+
+b - "BEGIN"
+d - "END"
+g - ":="
+;
+(
+)
++
+-
+r - "READ"
+w - "WRITE"
+i - "IF"
+h - "THEN"
+k - "ELSE"
+o - "OR"
+a - "AND"
+n - "NOT"
+t - "TRUE"
+f - "FALSE"

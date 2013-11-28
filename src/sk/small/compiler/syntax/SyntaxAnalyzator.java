@@ -103,146 +103,150 @@ public class SyntaxAnalyzator {
                 stack.push('S');
                 stack.push(Word.BEGIN);
                 break;
-            case 2:     //2. S -> TS
-                stack.push('S');
+            case 2:     //2. S -> TZ
+                stack.push('Z');
                 stack.push('T');
                 break;
-            case 3:     //3. S -> e
+            case 3:     //3. Z -> TZ
+                stack.push('Z');
+                stack.push('T');
                 break;
-            case 4:     //4. T -> IgE;
+            case 4:     //4. S -> e
+                break;
+            case 5:     //5. T -> IgE;
                 stack.push(Word.STATEMENT_END);
                 stack.push('E');
                 stack.push(Word.ASSIGN);
                 stack.push('I');
                 break;
-            case 5:     //5. T -> r(L);
+            case 6:     //6. T -> r(L);
                 stack.push(Word.STATEMENT_END);
                 stack.push(Word.RP);
                 stack.push('L');
                 stack.push(Word.LP);
                 stack.push(Word.READ);
                 break;
-            case 6:     // 6. T -> w(X);
+            case 7:     // 7. T -> w(X);
                 stack.push(Word.STATEMENT_END);
                 stack.push(Word.RP);
                 stack.push('X');
                 stack.push(Word.LP);
                 stack.push(Word.WRITE);
                 break;
-            case 7:     //7. T -> iBhTY
+            case 8:     //8. T -> iBhTY
                 stack.push('Y');
                 stack.push('T');
                 stack.push(Word.THEN);
                 stack.push('B');
                 stack.push(Word.IF);
                 break;
-            case 8:     //8. Y -> ;
+            case 9:     //9. Y -> ;
                 stack.push(Word.STATEMENT_END);
                 break;
-            case 9:     //9. Y -> kT;
+            case 10:     //10. Y -> kT;
                 stack.push(Word.STATEMENT_END);
                 stack.push('T');
                 stack.push(Word.ELSE);
                 break;
-            case 10:    //10. L -> IM
+            case 11:    //11. L -> IM
                 stack.push('M');
                 stack.push('I');
                 break;
-            case 11:    //11. M -> ,IM
+            case 12:    //12. M -> ,IM
                 stack.push('M');
                 stack.push('I');
                 stack.push(Word.COMMA);
                 break;
-            case 12:    //12. M -> e
+            case 13:    //13. M -> e
                 break;
-            case 13:    //13. X -> EK
+            case 14:    //14. X -> EK
                 stack.push('K');
                 stack.push('E');
                 break;
-            case 14:    //14. K -> ,EK
+            case 15:    //15. K -> ,EK
                 stack.push('K');
                 stack.push('E');
                 stack.push(Word.COMMA);
                 break;
-            case 15:    //15. K -> e
+            case 16:    //16. K -> e
                 break;
-            case 16:    //16. E -> FJ
+            case 17:    //17. E -> FJ
                 stack.push('J');
                 stack.push('F');
                 break;
-            case 17:    //17. J -> OFJ
+            case 18:    //18. J -> OFJ
                 stack.push('J');
                 stack.push('F');
                 stack.push('O');
                 break;
-            case 18:    //18. J -> e
+            case 19:    //19. J -> e
                 break;
-            case 19:    //19. F -> (E)
+            case 20:    //20. F -> (E)
                 stack.push(Word.RP);
                 stack.push('E');
                 stack.push(Word.LP);
                 break;
-            case 20:    //20. F -> I
+            case 21:    //21. F -> I
                 stack.push('I');
                 break;
-            case 21:    //21. F -> N
+            case 22:    //22. F -> N
                 stack.push('N');
                 break;
-            case 22:    //22. O -> +
+            case 23:    //23. O -> +
                 stack.push(Word.PLUS);
                 break;
-            case 23:    //23. O -> -
+            case 24:    //24. O -> -
                 stack.push(Word.MINUS);
                 break;
-            case 24:    //24. B -> RD
+            case 25:    //25. B -> RD
                 stack.push('D');
                 stack.push('R');
                 break;
-            case 25:    //25.    D -> oRD
+            case 26:    //26.    D -> oRD
                 stack.push('D');
                 stack.push('R');
                 stack.push(Word.OR);
                 break;
-            case 26:    //26.    D -> e
+            case 27:    //27.    D -> e
                 break;
-            case 27:    //27.    R -> AQ
+            case 28:    //28.    R -> AQ
                 stack.push('Q');
                 stack.push('A');
                 break;
-            case 28:    //28.    Q -> aAQ
+            case 29:    //29.    Q -> aAQ
                 stack.push('Q');
                 stack.push('A');
                 stack.push(Word.AND);
                 break;
-            case 29:    //29.    Q -> e
+            case 30:    //30.    Q -> e
                 break;
-            case 30:    //30.    A -> nA
+            case 31:    //31.    A -> nA
                 stack.push('A');
                 stack.push(Word.NOT);
                 break;
-            case 31:    //31.    A -> (B)
+            case 32:    //32.    A -> (B)
                 stack.push(Word.RP);
                 stack.push('B');
                 stack.push(Word.LP);
                 break;
-            case 32:    //32.    A -> t
+            case 33:    //33.    A -> t
                 stack.push(Word.TRUE);
                 break;
-            case 33:    //33.    A -> f
+            case 34:    //34.    A -> f
                 stack.push(Word.FALSE);
                 break;
-            case 34:    //34.    N -> +l
+            case 35:    //35.    N -> +l
                 stack.push(new Number(0)); //doesnt mather what number we put here we need only token name for compare
                 stack.push(Word.PLUS);
                 break;
-            case 35:    //35.    N -> -l
+            case 36:    //36.    N -> -l
                 stack.push(new Number(0)); //doesnt mather what number we put here we need only token name for compare
                 stack.push(Word.PLUS);
                 break;
-            case 36:    //36.    N -> l
+            case 37:    //37.    N -> l
                 stack.push(new Number(0)); //doesnt mather what number we put here we need only token name for compare
                 break;
-            case 37:    //37.    I -> id token
+            case 38:    //38.    I -> id token
                 stack.push(new Id(0));
                 break;
         }

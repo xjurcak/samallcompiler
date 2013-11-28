@@ -1,5 +1,6 @@
 P -> bSd
-S -> TS|e
+S -> TZ
+Z -> TZ|e
 T -> IgE;
 T -> r(L);
 T -> w(X);

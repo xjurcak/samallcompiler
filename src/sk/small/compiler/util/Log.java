@@ -1,6 +1,10 @@
 package sk.small.compiler.util;
 
+import sk.small.compiler.errors.CompilerException;
+import sk.small.compiler.errors.ErrorReporter;
+
 import java.util.Date;
+import java.util.List;
 import java.util.logging.*;
 
 /**
@@ -40,5 +44,12 @@ public class Log {
 
     public static void e(String tag, String message){
         logger.log(Level.SEVERE, tag + ": " + message);
+    }
+
+    public static void e(String tag, List<CompilerException> errors){
+
+        for(CompilerException e: errors){
+            Log.e(tag, e.getType().name() + ":" + e.getMessage());
+        }
     }
 }

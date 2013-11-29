@@ -1,6 +1,6 @@
 P -> bSd			program ::= 'BEGIN' statement_list 'END' . 
 S -> TS'			statement_list ::= statement {statement} .
-S'-> S|e
+S'-> TS'|e
 T -> IgE;			statement ::= ident ':=' expression ';' .
 T -> r(L);			statement ::= 'READ' '(' id_list ')' ';' .
 T -> w(X);			statement ::= 'WRITE' '(' expr_list ')' ';' . 

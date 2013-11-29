@@ -1,5 +1,8 @@
 package sk.small.compiler.syntax;
 
+import sk.small.compiler.errors.CompilerException;
+import sk.small.compiler.errors.ErrorReporter;
+import sk.small.compiler.errors.SyntaxException;
 import sk.small.compiler.lexic.*;
 import sk.small.compiler.lexic.Number;
 import sk.small.compiler.util.Log;
@@ -19,10 +22,11 @@ public class SyntaxAnalyzator {
     private final Lexicator lexicator;
     private Token token;
     private Stack<Object> stack = new Stack<Object>();
+    private ErrorReporter errorReporter;
 
-    public SyntaxAnalyzator(Lexicator lexicator) throws IOException {
+    public SyntaxAnalyzator(Lexicator lexicator, ErrorReporter errorReporter) throws IOException {
         this.lexicator = lexicator;
-
+        this.errorReporter = errorReporter;
         //push start nonterminal
         stack.push(TokenType.EOF);
         stack.push('P');
@@ -38,9 +42,11 @@ public class SyntaxAnalyzator {
                 int rule = SyntaxTable.getRule((Character)o, token);
                 Log.d(LOGTAG, "input: " + token + " rule: " + rule + " nonterminal: " + (Character)o );
                 if(rule == 0){
-                    Log.e(LOGTAG, "Error: no rule for nonterminal: " + (Character)o + " and input: " + token);
+
+                    errorReporter.reportError(new SyntaxException("No rule for nonterminal: " + (Character)o + " and input: " + token));
                     //not skip just remove nonterminal from stack
-                    //token = lexicator.nextToken();
+                    stack.push(o);
+                    token = lexicator.nextToken();
                 } else {
                     applyRule(rule);
                 }
@@ -50,11 +56,12 @@ public class SyntaxAnalyzator {
                     Log.d(LOGTAG, "input: " + token + " rule: pop terminal and get next token");
                     token = lexicator.nextToken();
                 } else if (token.getTokenType() == TokenType.UNKNOWN) {
-                    Log.e(LOGTAG, "Error: we expect : " + o + " and input is: " + token);
+                    errorReporter.reportError(new SyntaxException("Misspeling: we expect : " + o + " and input is: " + token));
                     //unknown token so we rise an error and consider it as misspeling
                     token = lexicator.nextToken();
                 } else{
                     Log.e(LOGTAG, "Error: we expect : " + o + " and input is: " + token);
+                    errorReporter.reportError(new SyntaxException("Missing token: we expect : " + o + " and input is: " + token));
                     //Missing token no skip
                 }
             }

@@ -35,7 +35,7 @@ public class Lexicator {
     }
 
     public Token nextToken() throws IOException{
-        Log.d(LOGTAG, "nextToken() start. Lexeme start with character: " + (char)chr);
+        Log.d(LOGTAG, "nextToken() start. Lexeme start with character: " + charToString(chr));
         Token t = readToken();
         Log.d(LOGTAG, "nextToken() end. Token: " + t);
         return t;
@@ -50,10 +50,10 @@ public class Lexicator {
 
         //skip all empty characters
         if( chr == ' ' || chr == '\t' || chr == '\n' || chr == '\r'){
-            Log.d(LOGTAG, "skip char: " + (char) chr);
+            Log.d(LOGTAG, "skip char: " + charToString(chr));
             while ( (chr = buffer.readNext()) != -1) {
                 if( chr == ' ' || chr == '\t' || chr == '\n' || chr == '\r')  {
-                    Log.d(LOGTAG, "skip char: " + (char) chr);
+                    Log.d(LOGTAG, "skip char: " + charToString(chr));
                     state = 0;
                     continue;
                 } else {
@@ -152,5 +152,32 @@ public class Lexicator {
                 chr = buffer.readNext();
                 return t;
         }
+    }
+    
+    private String charToString(byte ch){
+		
+    	String str;
+    	
+    	switch (ch) {
+		case ' ':
+			str = "Space 32 ";
+			break;
+		case '\t':
+			str = "TAB 9";
+			break;
+		case '\n':
+			str = "LF 10";
+			break;
+		case '\r':
+			str = "CR 13";
+			break;
+
+		default:
+			str = "";
+			break;
+		}
+    	
+    	return str;
+    	
     }
 }

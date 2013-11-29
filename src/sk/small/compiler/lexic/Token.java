@@ -8,24 +8,18 @@ package sk.small.compiler.lexic;
  */
 public class Token {
 
-    private String name;
+    private TokenType tokenType;
 
-    public Token(String name) {
-        this.name = name;
+    public Token(TokenType id) {
+        this.tokenType = id;
     }
 
-    public Token(char name) {
-        this.name = Character.toString(name);
-    }
-
-
-
-    public String getName() {
-        return name;
+    public TokenType getTokenType(){
+        return tokenType;
     }
 
     @Override
     public String toString() {
-        return "\"" + name + "\"";
+        return "\"" + tokenType.name() + "\"";
     }
 }

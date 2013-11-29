@@ -11,7 +11,7 @@ public class Number extends Token{
     private int number;
 
     public Number(int number){
-        super("NUMBER");
+        super(TokenType.NUMBER);
         this.number = number;
 
     }
@@ -19,9 +19,4 @@ public class Number extends Token{
     public int getNumber() {
         return number;
     }
-
-   /* @Override
-    public String toString() {
-        return super.toString() + " Number value: " + number;
-    }*/
 }

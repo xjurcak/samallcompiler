@@ -24,7 +24,7 @@ public class SyntaxAnalyzator {
         this.lexicator = lexicator;
 
         //push start nonterminal
-        stack.push(Word.EOF);
+        stack.push(TokenType.EOF);
         stack.push('P');
         token = lexicator.nextToken();
     }
@@ -38,70 +38,42 @@ public class SyntaxAnalyzator {
                 int rule = SyntaxTable.getRule((Character)o, token);
                 Log.d(LOGTAG, "input: " + token + " rule: " + rule + " nonterminal: " + (Character)o );
                 if(rule == 0){
-                    Log.e(LOGTAG, "Error: no rule for nonsterminal: " + (Character)o + " and input: " + token);
-                    token = lexicator.nextToken();
+                    Log.e(LOGTAG, "Error: no rule for nonterminal: " + (Character)o + " and input: " + token);
+                    //not skip just remove nonterminal from stack
+                    //token = lexicator.nextToken();
                 } else {
                     applyRule(rule);
                 }
             } else {
-                if(token.getName().equals(((Token)o).getName())){
+                if(token.getTokenType() == (TokenType)o){
                     //we can move to next Token
-                    Log.d(LOGTAG, "input: " + token + " rule: next token");
+                    Log.d(LOGTAG, "input: " + token + " rule: pop terminal and get next token");
                     token = lexicator.nextToken();
+                } else if (token.getTokenType() == TokenType.UNKNOWN) {
+                    Log.e(LOGTAG, "Error: we expect : " + o + " and input is: " + token);
+                    //unknown token so we rise an error and consider it as misspeling
+                    token = lexicator.nextToken();
+                } else{
+                    Log.e(LOGTAG, "Error: we expect : " + o + " and input is: " + token);
+                    //Missing token no skip
                 }
             }
 
 
         } while (!stack.empty());
 
-        if(token == Word.EOF)
+        if(token.getTokenType() == TokenType.EOF)
             return true;
         else
             return false;
     }
 
-    /*
-
-     2   S -> TS
-     3   S -> e
-     4   T -> IgE;
-     5   T -> r(L);
-     6   T -> w(X);
-     7   T -> iBhTY
-     8   Y -> ;
-     9   Y -> kT;
-     10  L -> IM
-     11  M -> ,IM
-     12  M -> e
-     13  X -> EK
-     14  K -> ,EK|e
-         E -> FJ
-        J -> OFJ|e
-        F -> (E)
-        F -> I|N
-        O -> +|-
-        B -> RD
-        D -> oRD|e
-        R -> AQ
-        Q -> aAQ|e
-        A -> nA|(B)|t|f
-        I -> ZG
-        G -> ZG|WG|e
-        N -> +H|-H|H
-        H -> UC
-        C -> WC|e
-        U -> 1|2|3|4|5|6|7|8|9
-        W -> 0|1|2|3|4|5|6|7|8|9
-        Z -> c
-    *
-    * */
-
     private void applyRule(int rule) {
         switch (rule) {
             case 1:     //1. P -> bSd
-                stack.push(Word.END);
+                stack.push(TokenType.END);
                 stack.push('S');
-                stack.push(Word.BEGIN);
+                stack.push(TokenType.BEGIN);
                 break;
             case 2:     //2. S -> TZ
                 stack.push('Z');
@@ -114,39 +86,39 @@ public class SyntaxAnalyzator {
             case 4:     //4. S -> e
                 break;
             case 5:     //5. T -> IgE;
-                stack.push(Word.STATEMENT_END);
+                stack.push(TokenType.STATEMENT_END);
                 stack.push('E');
-                stack.push(Word.ASSIGN);
+                stack.push(TokenType.ASSIGN);
                 stack.push('I');
                 break;
             case 6:     //6. T -> r(L);
-                stack.push(Word.STATEMENT_END);
-                stack.push(Word.RP);
+                stack.push(TokenType.STATEMENT_END);
+                stack.push(TokenType.RP);
                 stack.push('L');
-                stack.push(Word.LP);
-                stack.push(Word.READ);
+                stack.push(TokenType.LP);
+                stack.push(TokenType.READ);
                 break;
             case 7:     // 7. T -> w(X);
-                stack.push(Word.STATEMENT_END);
-                stack.push(Word.RP);
+                stack.push(TokenType.STATEMENT_END);
+                stack.push(TokenType.RP);
                 stack.push('X');
-                stack.push(Word.LP);
-                stack.push(Word.WRITE);
+                stack.push(TokenType.LP);
+                stack.push(TokenType.WRITE);
                 break;
             case 8:     //8. T -> iBhTY
                 stack.push('Y');
                 stack.push('T');
-                stack.push(Word.THEN);
+                stack.push(TokenType.THEN);
                 stack.push('B');
-                stack.push(Word.IF);
+                stack.push(TokenType.IF);
                 break;
             case 9:     //9. Y -> ;
-                stack.push(Word.STATEMENT_END);
+                stack.push(TokenType.STATEMENT_END);
                 break;
             case 10:     //10. Y -> kT;
-                stack.push(Word.STATEMENT_END);
+                stack.push(TokenType.STATEMENT_END);
                 stack.push('T');
-                stack.push(Word.ELSE);
+                stack.push(TokenType.ELSE);
                 break;
             case 11:    //11. L -> IM
                 stack.push('M');
@@ -155,7 +127,7 @@ public class SyntaxAnalyzator {
             case 12:    //12. M -> ,IM
                 stack.push('M');
                 stack.push('I');
-                stack.push(Word.COMMA);
+                stack.push(TokenType.COMMA);
                 break;
             case 13:    //13. M -> e
                 break;
@@ -166,7 +138,7 @@ public class SyntaxAnalyzator {
             case 15:    //15. K -> ,EK
                 stack.push('K');
                 stack.push('E');
-                stack.push(Word.COMMA);
+                stack.push(TokenType.COMMA);
                 break;
             case 16:    //16. K -> e
                 break;
@@ -182,9 +154,9 @@ public class SyntaxAnalyzator {
             case 19:    //19. J -> e
                 break;
             case 20:    //20. F -> (E)
-                stack.push(Word.RP);
+                stack.push(TokenType.RP);
                 stack.push('E');
-                stack.push(Word.LP);
+                stack.push(TokenType.LP);
                 break;
             case 21:    //21. F -> I
                 stack.push('I');
@@ -193,10 +165,10 @@ public class SyntaxAnalyzator {
                 stack.push('N');
                 break;
             case 23:    //23. O -> +
-                stack.push(Word.PLUS);
+                stack.push(TokenType.PLUS);
                 break;
             case 24:    //24. O -> -
-                stack.push(Word.MINUS);
+                stack.push(TokenType.MINUS);
                 break;
             case 25:    //25. B -> RD
                 stack.push('D');
@@ -205,7 +177,7 @@ public class SyntaxAnalyzator {
             case 26:    //26.    D -> oRD
                 stack.push('D');
                 stack.push('R');
-                stack.push(Word.OR);
+                stack.push(TokenType.OR);
                 break;
             case 27:    //27.    D -> e
                 break;
@@ -216,38 +188,38 @@ public class SyntaxAnalyzator {
             case 29:    //29.    Q -> aAQ
                 stack.push('Q');
                 stack.push('A');
-                stack.push(Word.AND);
+                stack.push(TokenType.AND);
                 break;
             case 30:    //30.    Q -> e
                 break;
             case 31:    //31.    A -> nA
                 stack.push('A');
-                stack.push(Word.NOT);
+                stack.push(TokenType.NOT);
                 break;
             case 32:    //32.    A -> (B)
-                stack.push(Word.RP);
+                stack.push(TokenType.RP);
                 stack.push('B');
-                stack.push(Word.LP);
+                stack.push(TokenType.LP);
                 break;
             case 33:    //33.    A -> t
-                stack.push(Word.TRUE);
+                stack.push(TokenType.TRUE);
                 break;
             case 34:    //34.    A -> f
-                stack.push(Word.FALSE);
+                stack.push(TokenType.FALSE);
                 break;
             case 35:    //35.    N -> +l
                 stack.push(new Number(0)); //doesnt mather what number we put here we need only token name for compare
-                stack.push(Word.PLUS);
+                stack.push(TokenType.PLUS);
                 break;
             case 36:    //36.    N -> -l
                 stack.push(new Number(0)); //doesnt mather what number we put here we need only token name for compare
-                stack.push(Word.PLUS);
+                stack.push(TokenType.PLUS);
                 break;
             case 37:    //37.    N -> l
-                stack.push(new Number(0)); //doesnt mather what number we put here we need only token name for compare
+                stack.push(TokenType.NUMBER); //doesnt mather what number we put here we need only token name for compare
                 break;
             case 38:    //38.    I -> id token
-                stack.push(new Id(0));
+                stack.push(TokenType.ID);
                 break;
         }
     }

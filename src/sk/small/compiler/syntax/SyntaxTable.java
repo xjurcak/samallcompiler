@@ -2,7 +2,7 @@ package sk.small.compiler.syntax;
 
 import sk.small.compiler.lexic.Id;
 import sk.small.compiler.lexic.Token;
-import sk.small.compiler.lexic.Word;
+import sk.small.compiler.lexic.TokenType;
 import sk.small.compiler.util.Log;
 
 import java.util.HashMap;
@@ -21,7 +21,7 @@ public class SyntaxTable {
           //                            a    b    d    f     g  h     i  j   k       l   n    o  r     t    w
           //    (   )   +   ,   -   ; AND START END FALSE  := THEN  IF  ID ELSE NUMBER NOT  OR READ TRUE WRITE
             {   0,  0,  0,  0,  0,  0,  0,    1,  0,    0,  0,   0,  0,  0,   0,     0,  0,  0,   0,   0,    0,  0},  //P
-            {   0,  0,  0,  0,  0,  0,  0,    0,  4,    0,  0,   0,  2,  2,   0,     0,  0,  0,   2,   0,    2,  0},  //S
+            {   0,  0,  0,  0,  0,  0,  0,    0,  0,    0,  0,   0,  2,  2,   0,     0,  0,  0,   2,   0,    2,  0},  //S
             {   0,  0,  0,  0,  0,  0,  0,    0,  0,    0,  0,   0,  8,  5,   0,     0,  0,  0,   6,   0,    7,  0},  //T
             {   0,  0,  0,  0,  0,  9,  0,    0,  0,    0,  0,   0,  0,  0,  10,     0,  0,  0,   0,   0,    0,  0},  //Y
             {   0,  0,  0,  0,  0,  0,  0,    0,  0,    0,  0,   0,  0, 11,   0,     0,  0,  0,   0,   0,    0,  0},  //L
@@ -43,33 +43,33 @@ public class SyntaxTable {
 
     };
 
-    private static final HashMap<String, Integer> columnMapper;
+    private static final HashMap<TokenType, Integer> columnMapper;
     private static final HashMap<Character, Integer> rowMapper;
 
     static {
-        columnMapper = new HashMap<String, Integer>();
-        columnMapper.put(Word.LP.getName(), 0);
-        columnMapper.put(Word.RP.getName(), 1);
-        columnMapper.put(Word.PLUS.getName(), 2);
-        columnMapper.put(Word.COMMA.getName(), 3);
-        columnMapper.put(Word.MINUS.getName(), 4);
-        columnMapper.put(Word.STATEMENT_END.getName(), 5);
-        columnMapper.put(Word.AND.getName(), 6);
-        columnMapper.put(Word.BEGIN.getName(), 7);
-        columnMapper.put(Word.END.getName(), 8);
-        columnMapper.put(Word.FALSE.getName(), 9);
-        columnMapper.put(Word.ASSIGN.getName(), 10);
-        columnMapper.put(Word.THEN.getName(), 11);
-        columnMapper.put(Word.IF.getName(), 12);
-        columnMapper.put(new Id(0).getName(), 13);
-        columnMapper.put(Word.ELSE.getName(), 14);
-        columnMapper.put(new sk.small.compiler.lexic.Number(0).getName(), 15);
-        columnMapper.put(Word.NOT.getName(), 16);
-        columnMapper.put(Word.OR.getName(), 17);
-        columnMapper.put(Word.READ.getName(), 18);
-        columnMapper.put(Word.TRUE.getName(), 19);
-        columnMapper.put(Word.WRITE.getName(), 20);
-        columnMapper.put(Word.EOF.getName(), 21);
+        columnMapper = new HashMap<TokenType, Integer>();
+        columnMapper.put(TokenType.LP, 0);
+        columnMapper.put(TokenType.RP, 1);
+        columnMapper.put(TokenType.PLUS, 2);
+        columnMapper.put(TokenType.COMMA, 3);
+        columnMapper.put(TokenType.MINUS, 4);
+        columnMapper.put(TokenType.STATEMENT_END, 5);
+        columnMapper.put(TokenType.AND, 6);
+        columnMapper.put(TokenType.BEGIN, 7);
+        columnMapper.put(TokenType.END, 8);
+        columnMapper.put(TokenType.FALSE, 9);
+        columnMapper.put(TokenType.ASSIGN, 10);
+        columnMapper.put(TokenType.THEN, 11);
+        columnMapper.put(TokenType.IF, 12);
+        columnMapper.put(TokenType.ID, 13);
+        columnMapper.put(TokenType.ELSE, 14);
+        columnMapper.put(TokenType.NUMBER, 15);
+        columnMapper.put(TokenType.NOT, 16);
+        columnMapper.put(TokenType.OR, 17);
+        columnMapper.put(TokenType.READ, 18);
+        columnMapper.put(TokenType.TRUE, 19);
+        columnMapper.put(TokenType.WRITE, 20);
+        columnMapper.put(TokenType.EOF, 21);
 
         rowMapper = new HashMap<Character, Integer>();
         rowMapper.put('P', 0);
@@ -96,10 +96,10 @@ public class SyntaxTable {
     }
 
     public static int getRule(char nonterminal, Token terminal) {
-        Log.d(LOGTAG, "getRule( " + nonterminal + ", " + terminal.getName() + " )");
+        Log.d(LOGTAG, "getRule( " + nonterminal + ", " + terminal + " )");
         int row = rowMapper.get(nonterminal);
-        if(columnMapper.containsKey(terminal.getName())){
-            int column = columnMapper.get(terminal.getName());
+        if(columnMapper.containsKey(terminal.getTokenType())){
+            int column = columnMapper.get(terminal.getTokenType());
             return table[row][column];
         } else {
             return -1;

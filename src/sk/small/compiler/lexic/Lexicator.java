@@ -82,7 +82,7 @@ public class Lexicator {
                 return Word.ASSIGN;
             } else {
                 Log.e(LOGTAG, "Error: unknow token:  ':'");
-                return new Token(":");
+                return new Token(TokenType.UNKNOWN);
             }
         } else if (Character.isLetter(chr)){
             do{
@@ -134,7 +134,7 @@ public class Lexicator {
             return new Number(number);
         } else {
             // error unknow word
-            Token t = new Token((char)chr);
+            Token t = new Token(TokenType.UNKNOWN);
             Log.e(LOGTAG, "Error: unknow token: " + t);
             chr = buffer.readNext();
             return t;

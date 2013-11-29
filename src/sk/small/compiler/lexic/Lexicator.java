@@ -44,10 +44,10 @@ public class Lexicator {
             return Word.EOF;
 
         //skip all empty characters
-        if( chr == ' ' || chr == '\t' || chr == '\n'){
+        if( chr == ' ' || chr == '\t' || chr == '\n' || chr == '\r'){
             Log.d(LOGTAG, "skip char: " + (char) chr);
             while ( (chr = buffer.readNext()) != -1) {
-                if( chr == ' ' || chr == '\t' || chr == '\n')  {
+                if( chr == ' ' || chr == '\t' || chr == '\n' || chr == '\r')  {
                     Log.d(LOGTAG, "skip char: " + (char) chr);
                     state = 0;
                     continue;

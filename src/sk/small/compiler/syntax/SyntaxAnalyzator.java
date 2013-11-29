@@ -41,15 +41,7 @@ public class SyntaxAnalyzator {
             if(o instanceof Character) { //nonterminal so ve need expand new rule
                 int rule = SyntaxTable.getRule((Character)o, token);
                 Log.d(LOGTAG, "input: " + token + " rule: " + rule + " nonterminal: " + (Character)o );
-                if(rule == 0){
-
-                    errorReporter.reportError(new SyntaxException("No rule for nonterminal: " + (Character)o + " and input: " + token));
-                    //not skip just remove nonterminal from stack
-                    stack.push(o);
-                    token = lexicator.nextToken();
-                } else {
-                    applyRule(rule);
-                }
+                applyRule(rule, (Character)o);
             } else {
                 if(token.getTokenType() == (TokenType)o){
                     //we can move to next Token
@@ -75,8 +67,30 @@ public class SyntaxAnalyzator {
             return false;
     }
 
-    private void applyRule(int rule) {
+    private void applyRule(int rule, Character c) throws IOException{
         switch (rule) {
+            case -4:
+                errorReporter.reportError(new SyntaxException("Missing ';'"));
+                stack.pop();
+                break;
+            case -3:
+                errorReporter.reportError(new SyntaxException("Missing ';'"));
+                stack.pop();
+                break;
+            case -2: //unexpected end token we try just ignore it
+                errorReporter.reportError(new SyntaxException("Unexpected end of file"));
+                stack.push(c);
+                token = lexicator.nextToken();
+                break;
+            case -1: //unexpected end of file nothing to process so we clear stack and check ends
+                errorReporter.reportError(new SyntaxException("Unexpected end of file"));
+                stack.clear();
+                break;
+            case 0: //unkonwn error return Nonterminal to stack and move to next token
+                errorReporter.reportError(new SyntaxException("No rule for nonterminal: " + c + " and input: " + token));
+                stack.push(c);
+                token = lexicator.nextToken();
+                break;
             case 1:     //1. P -> bSd
                 stack.push(TokenType.END);
                 stack.push('S');

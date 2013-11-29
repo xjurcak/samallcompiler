@@ -38,25 +38,9 @@ public class SyntaxAnalyzator {
         do {
             Log.d(LOGTAG, "Stack: " + stack);
             Object o = stack.pop();
-            if(o instanceof Character) { //nonterminal so ve need expand new rule
-                int rule = SyntaxTable.getRule((Character)o, token);
-                Log.d(LOGTAG, "input: " + token + " rule: " + rule + " nonterminal: " + (Character)o );
-                applyRule(rule, (Character)o);
-            } else {
-                if(token.getTokenType() == (TokenType)o){
-                    //we can move to next Token
-                    Log.d(LOGTAG, "input: " + token + " rule: pop terminal and get next token");
-                    token = lexicator.nextToken();
-                } else if (token.getTokenType() == TokenType.UNKNOWN) {
-                    errorReporter.reportError(new SyntaxException("Misspeling: we expect : " + o + " and input is: " + token));
-                    //unknown token so we rise an error and consider it as misspeling
-                    token = lexicator.nextToken();
-                } else{
-                    Log.e(LOGTAG, "Error: we expect : " + o + " and input is: " + token);
-                    errorReporter.reportError(new SyntaxException("Missing token: we expect : " + o + " and input is: " + token));
-                    //Missing token no skip
-                }
-            }
+            int rule = SyntaxTable.getRule(o, token);
+            Log.d(LOGTAG, "input: " + token + " rule: " + rule + " stactk entry: " + o );
+            applyRule(rule, o);
 
 
         } while (!stack.empty());
@@ -67,8 +51,23 @@ public class SyntaxAnalyzator {
             return false;
     }
 
-    private void applyRule(int rule, Character c) throws IOException{
+    private void applyRule(int rule, Object stackEntry) throws IOException{
         switch (rule) {
+            case -7:   //terminal doesnt match, we rise error, but we treat terminal as right
+                errorReporter.reportError(new SyntaxException("Missing ';'"));
+                break;
+            case -6:   //terminal doesnt match, we rise error, but we treat terminal as right
+                errorReporter.reportError(new SyntaxException("Unexpected terminal. We expect: '" + stackEntry + "' , but '" + token + "' detected."));
+                token = lexicator.nextToken();
+                break;
+            case -5:   //we detect end of statement
+                errorReporter.reportError(new SyntaxException("Unexpected end of statement ';'"));
+                stack.clear();
+                stack.push(TokenType.EOF);
+                stack.push(TokenType.END);
+                stack.push('S');
+                token = lexicator.nextToken();
+                break;
             case -4:
                 errorReporter.reportError(new SyntaxException("Missing ';'"));
                 stack.pop();
@@ -79,7 +78,7 @@ public class SyntaxAnalyzator {
                 break;
             case -2: //unexpected end token we try just ignore it
                 errorReporter.reportError(new SyntaxException("Unexpected END statement"));
-                stack.push(c);
+                stack.push(stackEntry);
                 token = lexicator.nextToken();
                 break;
             case -1: //unexpected end of file nothing to process so we clear stack and check ends
@@ -87,8 +86,8 @@ public class SyntaxAnalyzator {
                 stack.clear();
                 break;
             case 0: //unkonwn error return Nonterminal to stack and move to next token
-                errorReporter.reportError(new SyntaxException("No rule for nonterminal: " + c + " and input: " + token));
-                stack.push(c);
+                errorReporter.reportError(new SyntaxException("No rule for nonterminal: " + stackEntry + " and input: " + token));
+                stack.push(stackEntry);
                 token = lexicator.nextToken();
                 break;
             case 1:     //1. P -> bSd
@@ -241,6 +240,10 @@ public class SyntaxAnalyzator {
                 break;
             case 38:    //38.    I -> id token
                 stack.push(TokenType.ID);
+                break;
+            case 39:    //38.    I -> pop token
+                Log.d(LOGTAG, "input: " + token + " rule: pop terminal and get next token");
+                token = lexicator.nextToken();
                 break;
         }
     }

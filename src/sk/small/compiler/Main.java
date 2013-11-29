@@ -20,7 +20,7 @@ public class Main {
             ErrorReporter errorReporter = new ErrorReporter();
 
             InputStream is = new FileInputStream("C:\\Users\\xjurcako\\Documents\\skola\\softjazyky\\SmallCompilerProject\\test\\example.small");
-            Lexicator lexicator = new Lexicator(is);
+            Lexicator lexicator = new Lexicator(is, errorReporter);
 
             SyntaxAnalyzator analyzator = new SyntaxAnalyzator(lexicator, errorReporter);
 

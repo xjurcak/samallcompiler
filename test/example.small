@@ -1,2 +1,2 @@
-BEGIN 1statement:=123;
-statement:=123; END
+BEGIN 1statement=123;
+statement:= END

@@ -78,7 +78,7 @@ public class SyntaxAnalyzator {
                 stack.pop();
                 break;
             case -2: //unexpected end token we try just ignore it
-                errorReporter.reportError(new SyntaxException("Unexpected end of file"));
+                errorReporter.reportError(new SyntaxException("Unexpected END statement"));
                 stack.push(c);
                 token = lexicator.nextToken();
                 break;

@@ -1,5 +1,6 @@
 package sk.small.compiler;
 
+import sk.small.compiler.errors.ErrorReporter;
 import sk.small.compiler.lexic.Lexicator;
 import sk.small.compiler.lexic.Token;
 import sk.small.compiler.syntax.SyntaxAnalyzator;
@@ -16,11 +17,26 @@ public class Main {
 
     public static void main(String[] args) {
         try {
+            ErrorReporter errorReporter = new ErrorReporter();
+
             InputStream is = new FileInputStream("C:\\Users\\xjurcako\\Documents\\skola\\softjazyky\\SmallCompilerProject\\test\\example.small");
-            Lexicator lexicator = new Lexicator(is);
-            SyntaxAnalyzator analyzator = new SyntaxAnalyzator(lexicator);
+            Lexicator lexicator = new Lexicator(is, errorReporter);
+
+            SyntaxAnalyzator analyzator = new SyntaxAnalyzator(lexicator, errorReporter);
+
             boolean result = analyzator.check();
-            Log.d(LOGTAG, "Analyzator check reslut: " + result);
+
+            Log.d(LOGTAG, "<<<<<<<<<<<<<<< Error report >>>>>>>>>>>>>>>>.");
+            Log.e(LOGTAG, errorReporter.getErrors());
+
+            if(errorReporter.getErrors().isEmpty()) {
+                Log.d(LOGTAG, "Compilation Success.");
+            } else {
+                Log.d(LOGTAG, "Compilation Failed. Errors count: " + errorReporter.getErrors().size());
+            }
+
+            Log.d(LOGTAG, "<<<<<<<<<<<<<<< Error report >>>>>>>>>>>>>>>>.");
+
 
         } catch (FileNotFoundException e) {
             Log.e(LOGTAG, e.getMessage());

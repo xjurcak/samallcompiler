@@ -15,12 +15,12 @@ public class Id extends Token {
     private int tableId;
 
     public Id(int tableId){
-        super("id");
+        super(TokenType.ID);
         this.tableId = tableId;
     }
 
     @Override
     public String toString() {
-        return super.toString() + " Table id: " + tableId;
+        return super.toString();
     }
 }

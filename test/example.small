@@ -1,1 +1,3 @@
-BEGIN statement=123; END
+BEGIN 1statement:=; stt:=123;
+READ(stete, skksl)
+statement:= END

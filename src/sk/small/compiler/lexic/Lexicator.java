@@ -1,5 +1,7 @@
 package sk.small.compiler.lexic;
 
+import sk.small.compiler.errors.ErrorReporter;
+import sk.small.compiler.errors.LexicException;
 import sk.small.compiler.util.Log;
 
 import java.io.IOException;
@@ -22,9 +24,12 @@ public class Lexicator {
     private final Buffer buffer;
     private int state = 0;
     byte chr;
+    private ErrorReporter errorReporter;
 
-    public Lexicator(InputStream is) throws IOException {
+    public Lexicator(InputStream is, ErrorReporter errorReporter) throws IOException {
         this.inputStream = is;
+        this.errorReporter = errorReporter;
+
         buffer = new Buffer(inputStream);
         chr = buffer.readNext();
     }
@@ -44,10 +49,10 @@ public class Lexicator {
             return Word.EOF;
 
         //skip all empty characters
-        if( chr == ' ' || chr == '\t' || chr == '\n'){
+        if( chr == ' ' || chr == '\t' || chr == '\n' || chr == '\r'){
             Log.d(LOGTAG, "skip char: " + (char) chr);
             while ( (chr = buffer.readNext()) != -1) {
-                if( chr == ' ' || chr == '\t' || chr == '\n')  {
+                if( chr == ' ' || chr == '\t' || chr == '\n' || chr == '\r')  {
                     Log.d(LOGTAG, "skip char: " + (char) chr);
                     state = 0;
                     continue;
@@ -81,8 +86,9 @@ public class Lexicator {
                 chr = buffer.readNext();
                 return Word.ASSIGN;
             } else {
-                Log.e(LOGTAG, "Error: unknow token:  ':'");
-                return new Token(":");
+                //rise error and return correct token
+                errorReporter.reportError(new LexicException("Error: unknow token:  ':', correct token is ':='"));
+                return new Token(TokenType.ASSIGN);
             }
         } else if (Character.isLetter(chr)){
             do{
@@ -128,16 +134,23 @@ public class Lexicator {
             } while ( Character.isDigit(chr));
 
             if(Character.isLetter(chr)) { //also error not allowed 1111jjfh
-                Log.e(LOGTAG, "Error: unexpected end character for number: " + (char)chr);
+                errorReporter.reportError(new LexicException("Error: unexpected end character for number: " + (char)chr ));
             }
             Log.d(LOGTAG, "End read number value: " + number);
             return new Number(number);
-        } else {
-            // error unknow word
-            Token t = new Token((char)chr);
-            Log.e(LOGTAG, "Error: unknow token: " + t);
-            chr = buffer.readNext();
-            return t;
+        } else{
+                // error unknow word
+                if ( chr == '=' ){
+                    errorReporter.reportError(new LexicException("Error: unknow token: '=', missing ':'"));
+                    chr = buffer.readNext();
+                    return Word.ASSIGN;
+                }
+
+                Token t = new Token(TokenType.UNKNOWN);
+                errorReporter.reportError(new LexicException("Error: unknow token: '" + (char)chr + "'"));
+
+                chr = buffer.readNext();
+                return t;
         }
     }
 }

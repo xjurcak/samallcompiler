@@ -1,6 +1,7 @@
 P->bSd
-S->TS
-S->e
+S -> TZ
+Z -> TZ
+Z -> e
 T->IgE;
 T->r(L);
 T->w(X);

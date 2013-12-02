@@ -1,0 +1,11 @@
+BEGIN   
+  y := 3; n := 2;
+  string1 := Hello; string2 := World; 
+  string3 := UniverseIsBroken;
+
+  IF (TRUE) 
+  	THEN WRITE(string1 + string2); 
+  ELSE 
+  	WRITE(string3);
+  ;   
+END

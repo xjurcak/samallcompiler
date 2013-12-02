@@ -1,0 +1,6 @@
+BEGIN   
+  y := 1;
+  READ(y);
+  x := 5 + (7 - 1) + y;
+  WRITE(x);   
+END

@@ -1,0 +1,5 @@
+BEGIN 
+  x:=123; y:=3; 
+  IF(FALSE) THEN WRITE(x);;
+  WRITE(y);   
+END

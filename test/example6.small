@@ -1,0 +1,9 @@
+BEGIN   
+  x := TRUE;
+  WRITE(x);
+  
+  READ(y);
+  IF (TRUE OR NOT(FALSE AND TRUE)) THEN 
+  	WRITE(x);
+  ;
+END

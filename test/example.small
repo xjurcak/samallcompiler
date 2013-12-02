@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+BEGIN x:=123; y:=3; END
+=======
 BEGIN   
   y := 1;
     READ(y);
@@ -10,3 +13,4 @@ BEGIN
         WRITE(2);
         ;
 END
+>>>>>>> branch 'master' of git://github.com/xjurcak/samallcompiler

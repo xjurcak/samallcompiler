@@ -1,3 +1,12 @@
-BEGIN
-  IF (TRUE) THEN WRITE(string1 + string2); ELSE WRITE(2);
+BEGIN   
+  y := 1;
+    READ(y);
+    x := 5 + (7 - 1) + y;
+    WRITE(x);
+    x:=123; y:=3;
+      IF NOT(((TRUE) AND FALSE)OR(NOT TRUE)) THEN
+        WRITE(3);
+       ELSE
+        WRITE(2);
+        ;
 END

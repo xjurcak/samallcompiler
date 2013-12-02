@@ -53,8 +53,9 @@ public class SyntaxAnalyzator {
 
     private void applyRule(int rule, Object stackEntry) throws IOException{
         switch (rule) {
-            case -7:   //terminal doesnt match, we rise error, but we treat terminal as right
-                repportError("Missing ';'");
+
+            case -7:   //terminal doesnt match, we rise error, (missing token) but we treat terminal as right
+                repportError("Missing '" + stackEntry + "'");
                 break;
             case -6:   //terminal doesnt match, we rise error, but we treat terminal as right
                 repportError("Unexpected terminal. We expect: '" + stackEntry + "' , but '" + token + "' detected.");

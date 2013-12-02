@@ -6,8 +6,6 @@ import sk.small.compiler.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
-import java.util.logging.Logger;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,12 +24,25 @@ public class Lexicator {
     byte chr;
     private ErrorReporter errorReporter;
 
+    private int lineNumber = 1;
+    private int lexemeLineStartIndex = 0;
+
+    public int getLexemeLineEndIndex() {
+        return charLinePositon - 1;
+    }
+
+    public int getLexemeLineStartIndex() {
+        return lexemeLineStartIndex;
+    }
+
+    private int charLinePositon = 0;
+
     public Lexicator(InputStream is, ErrorReporter errorReporter) throws IOException {
         this.inputStream = is;
         this.errorReporter = errorReporter;
 
         buffer = new Buffer(inputStream);
-        chr = buffer.readNext();
+        nextChar();
     }
 
     public Token nextToken() throws IOException{
@@ -39,6 +50,10 @@ public class Lexicator {
         Token t = readToken();
         Log.d(LOGTAG, "nextToken() end. Token: " + t);
         return t;
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
     }
 
     private Token readToken() throws IOException{
@@ -50,8 +65,13 @@ public class Lexicator {
 
         //skip all empty characters
         if( chr == ' ' || chr == '\t' || chr == '\n' || chr == '\r'){
+            if( chr == '\r'){
+                lineNumber ++;
+                charLinePositon = 0;
+            }
+
             Log.d(LOGTAG, "skip char: " + charToString(chr));
-            while ( (chr = buffer.readNext()) != -1) {
+            while ( nextChar() != -1) {
                 if( chr == ' ' || chr == '\t' || chr == '\n' || chr == '\r')  {
                     Log.d(LOGTAG, "skip char: " + charToString(chr));
                     state = 0;
@@ -62,28 +82,30 @@ public class Lexicator {
             }
         }
 
+        lexemeLineStartIndex = charLinePositon - 1;
+
         if ( chr == ';') {
-            chr = buffer.readNext();
+            nextChar();
             return Word.STATEMENT_END;
         } else if ( chr == ',') {
-            chr = buffer.readNext();
+            nextChar();
             return Word.COMMA;
         }else if ( chr == '(') {
-            chr = buffer.readNext();
+            nextChar();
             return Word.LP;
         }else if ( chr == ')') {
-            chr = buffer.readNext();
+            nextChar();
             return Word.RP;
         }else if ( chr == '+') {
-            chr = buffer.readNext();
+            nextChar();
             return Word.PLUS;
         }else if ( chr == '-') {
-            chr = buffer.readNext();
+            nextChar();
             return Word.MINUS;
         }else if ( chr == ':' ) {     // assigment :=
-            chr = buffer.readNext();
+            nextChar();
             if( chr == '=' ) {
-                chr = buffer.readNext();
+                nextChar();
                 return Word.ASSIGN;
             } else {
                 //rise error and return correct token
@@ -93,7 +115,7 @@ public class Lexicator {
         } else if (Character.isLetter(chr)){
             do{
                 lexeme.append((char)chr);
-                chr = buffer.readNext();
+                nextChar();
             } while ( Character.isLetterOrDigit(chr) );
 
             String str = lexeme.toString();
@@ -130,7 +152,7 @@ public class Lexicator {
 
             do {
                 number = number * 10 +  Character.digit(chr, 10);
-                chr = buffer.readNext();
+                nextChar();
             } while ( Character.isDigit(chr));
 
             if(Character.isLetter(chr)) { //also error not allowed 1111jjfh
@@ -142,18 +164,25 @@ public class Lexicator {
                 // error unknow word
                 if ( chr == '=' ){
                     errorReporter.reportError(new LexicException("Error: unknow token: '=', missing ':'"));
-                    chr = buffer.readNext();
+                    nextChar();
                     return Word.ASSIGN;
                 }
 
                 Token t = new Token(TokenType.UNKNOWN);
                 errorReporter.reportError(new LexicException("Error: unknow token: '" + (char)chr + "'"));
 
-                chr = buffer.readNext();
-                return t;
+            nextChar();
+            return t;
         }
     }
-    
+
+    private int nextChar() throws IOException {
+
+        charLinePositon++;
+        chr = buffer.readNext();
+        return chr;
+    }
+
     private String charToString(byte ch){
 		
     	String str;

@@ -54,14 +54,14 @@ public class SyntaxAnalyzator {
     private void applyRule(int rule, Object stackEntry) throws IOException{
         switch (rule) {
             case -7:   //terminal doesnt match, we rise error, but we treat terminal as right
-                errorReporter.reportError(new SyntaxException("Missing ';'"));
+                repportError("Missing ';'");
                 break;
             case -6:   //terminal doesnt match, we rise error, but we treat terminal as right
-                errorReporter.reportError(new SyntaxException("Unexpected terminal. We expect: '" + stackEntry + "' , but '" + token + "' detected."));
+                repportError("Unexpected terminal. We expect: '" + stackEntry + "' , but '" + token + "' detected.");
                 token = lexicator.nextToken();
                 break;
             case -5:   //we detect end of statement
-                errorReporter.reportError(new SyntaxException("Unexpected end of statement ';'"));
+                repportError("Unexpected end of statement ';'");
                 stack.clear();
                 stack.push(TokenType.EOF);
                 stack.push(TokenType.END);
@@ -69,24 +69,24 @@ public class SyntaxAnalyzator {
                 token = lexicator.nextToken();
                 break;
             case -4:
-                errorReporter.reportError(new SyntaxException("Missing ';'"));
+                repportError("Missing ';'");
                 stack.pop();
                 break;
             case -3:
-                errorReporter.reportError(new SyntaxException("Missing ';'"));
+                repportError("Missing ';'");
                 stack.pop();
                 break;
             case -2: //unexpected end token we try just ignore it
-                errorReporter.reportError(new SyntaxException("Unexpected END statement"));
+                repportError("Unexpected END statement");
                 stack.push(stackEntry);
                 token = lexicator.nextToken();
                 break;
             case -1: //unexpected end of file nothing to process so we clear stack and check ends
-                errorReporter.reportError(new SyntaxException("Unexpected end of file"));
+                repportError("Unexpected end of file");
                 stack.clear();
                 break;
             case 0: //unkonwn error return Nonterminal to stack and move to next token
-                errorReporter.reportError(new SyntaxException("No rule for nonterminal: " + stackEntry + " and input: " + token));
+                repportError("No rule for nonterminal: " + stackEntry + " and input: " + token);
                 stack.push(stackEntry);
                 token = lexicator.nextToken();
                 break;
@@ -246,5 +246,9 @@ public class SyntaxAnalyzator {
                 token = lexicator.nextToken();
                 break;
         }
+    }
+
+    private void repportError(String message) {
+        errorReporter.reportError(new SyntaxException(String.format("Line: %1$s lexemeStart: %2$s lexemeEnd %3$s. %4$s",lexicator.getLineNumber(), lexicator.getLexemeLineStartIndex(), lexicator.getLexemeLineEndIndex(), message)));
     }
 }
